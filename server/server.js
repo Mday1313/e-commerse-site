@@ -7,7 +7,8 @@ const mongoose = require('mongoose');
 require('dotenv').config();
 
 mongoose.Promise = global.Promise;
-mongoose.connect(process.env.DATABASE)
+mongoose.set('useCreateIndex', true)
+mongoose.connect(process.env.DATABASE, { useNewUrlParser: true })
 
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(bodyParser.json());
@@ -17,9 +18,32 @@ app.use(cookieParser());
 const{ User } = require('./models/user');
 const{ Brand } = require('./models/brand');
 const{ Type } = require('./models/type');
+const{ Product } = require('./models/product');
+
+
 // Middleware
 const { auth } = require('./middleware/auth');
 const { admin } = require('./middleware/admin');
+
+
+// ==============Products====================
+
+app.get('/api/product/articles_by_id',(req,res)=>{
+
+})
+
+app.post('/api/product/article', auth, admin,(req,res)=>{
+    const product = new Product(req.body);
+
+    product.save((err,doc)=>{
+        if(err) return res.json({success:false,err});
+        res.status(200).json({
+            success: true,
+            article: doc
+        })
+    })
+})
+
 
 //==============BRANDS====================
 app.post('/api/product/brand',auth,admin,(req,res)=>{
